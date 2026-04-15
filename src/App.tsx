@@ -370,22 +370,86 @@ function PlatformToolbar({
     <section className="toolbar" aria-label="Build filters">
       {availablePlatforms.length > 1 && (
         <button
-          className={platformFilter === "all" ? "active" : ""}
+          className={`platform-filter all ${platformFilter === "all" ? "active" : ""}`}
+          aria-label="Show all platforms"
           onClick={() => onChange("all")}
+          title="All platforms"
         >
-          All
+          <span className="platform-filter-icon">
+            <PlatformIcon platform="all" />
+          </span>
+          <span className="platform-filter-label">All</span>
         </button>
       )}
       {availablePlatforms.map((platform) => (
         <button
           key={platform}
-          className={platformFilter === platform ? "active" : ""}
+          className={`platform-filter ${platform} ${platformFilter === platform ? "active" : ""}`}
+          aria-label={`Show ${getPlatformLabel(platform)} builds`}
           onClick={() => onChange(platform)}
+          title={getPlatformLabel(platform)}
         >
-          {getPlatformLabel(platform)}
+          <span className="platform-filter-icon">
+            <PlatformIcon platform={platform} />
+          </span>
+          <span className="platform-filter-label">{getPlatformLabel(platform)}</span>
         </button>
       ))}
     </section>
+  );
+}
+
+function PlatformIcon({ platform }: { platform: PlatformFilter }) {
+  if (platform === "all") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="4" y="4" width="6" height="6" rx="1.5" />
+        <rect x="14" y="4" width="6" height="6" rx="1.5" />
+        <rect x="4" y="14" width="6" height="6" rx="1.5" />
+        <rect x="14" y="14" width="6" height="6" rx="1.5" />
+      </svg>
+    );
+  }
+
+  if (platform === "ios") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M16.95 12.35c-.03-2.18 1.78-3.23 1.86-3.28-1.02-1.48-2.6-1.68-3.16-1.7-1.34-.14-2.62.79-3.3.79-.69 0-1.74-.77-2.86-.75-1.47.02-2.83.86-3.59 2.18-1.53 2.65-.39 6.58 1.1 8.74.73 1.05 1.6 2.24 2.74 2.19 1.1-.04 1.52-.71 2.85-.71s1.71.71 2.87.69c1.19-.02 1.94-1.07 2.66-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.35-.9-2.37-3.56z" />
+        <path d="M14.77 5.95c.6-.72 1-1.73.89-2.73-.86.03-1.9.57-2.52 1.29-.55.64-1.04 1.66-.91 2.64.96.07 1.94-.49 2.54-1.2z" />
+      </svg>
+    );
+  }
+
+  if (platform === "android") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M6.25 15.25v-1.9a5.75 5.75 0 0 1 11.5 0v1.9z" />
+        <path d="M8.75 8.25 7.25 5.9" />
+        <path d="m15.25 8.25 1.5-2.35" />
+        <circle cx="9.85" cy="12.2" r="0.55" />
+        <circle cx="14.15" cy="12.2" r="0.55" />
+      </svg>
+    );
+  }
+
+  if (platform === "web") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="8.25" />
+        <path d="M4 12h16" />
+        <path d="M12 3.75c2.2 2.3 3.25 5.05 3.25 8.25S14.2 17.95 12 20.25" />
+        <path d="M12 3.75C9.8 6.05 8.75 8.8 8.75 12s1.05 5.95 3.25 8.25" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M4 5.5 11 4v7.25H4z" />
+      <path d="M13 3.6 20 2v9.25h-7z" />
+      <path d="M4 12.75h7V20l-7-1.5z" />
+      <path d="M13 12.75h7V22l-7-1.6z" />
+    </svg>
   );
 }
 

@@ -123,6 +123,7 @@ button:disabled {
 }
 
 .topbar .eyebrow {
+  font-size: 1rem;
   margin: 0;
 }
 
@@ -171,7 +172,96 @@ button:disabled {
 
 .toolbar {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.toolbar button {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  height: 44px;
+  justify-content: center;
+  min-width: 84px;
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
+.platform-filter-icon {
+  display: none;
+}
+
+.platform-filter-label {
+  display: inline;
+}
+
+.toolbar button svg {
+  fill: none;
+  height: 22px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 22px;
+}
+
+.toolbar button svg rect,
+.toolbar button svg circle {
+  fill: none;
+}
+
+.toolbar button.active svg rect,
+.toolbar button.active svg circle,
+.toolbar button.active svg path {
+  stroke-width: 2.1;
+}
+
+.platform-filter.all {
+  color: var(--accent-strong);
+}
+
+.platform-filter.ios {
+  color: var(--ios);
+}
+
+.platform-filter.ios svg path {
+  fill: currentColor;
+  stroke: none;
+}
+
+.platform-filter.android {
+  color: var(--android);
+}
+
+.platform-filter.android svg circle {
+  fill: currentColor;
+}
+
+.platform-filter.windows {
+  color: #6c4f9b;
+}
+
+.platform-filter.web {
+  color: var(--web);
+}
+
+@media (max-width: 560px) {
+  .toolbar button {
+    gap: 0;
+    min-width: 44px;
+    padding: 0;
+    width: 44px;
+  }
+
+  .platform-filter-icon {
+    display: inline-flex;
+  }
+
+  .platform-filter-label {
+    display: none;
+  }
 }
 
 .project-picker {
