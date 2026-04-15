@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatFileSize, mapBuildDoc } from "./firestoreModels";
+import { formatFileSize, mapAppDoc, mapBuildDoc } from "./firestoreModels";
 
 function doc(data: Record<string, unknown>) {
   return {
@@ -60,6 +60,31 @@ describe("mapBuildDoc", () => {
     );
 
     expect(record.platform).toBe("windows");
+  });
+
+  it("keeps Web build platform values", () => {
+    const record = mapBuildDoc(
+      doc({
+        appId: "app-1",
+        platform: "web",
+        version: "1.0.0",
+        buildNumber: "100",
+        driveUrl: "https://drive.google.com/file/d/drive-file/view"
+      }) as never
+    );
+
+    expect(record.platform).toBe("web");
+  });
+
+  it("keeps Web app platform values", () => {
+    const record = mapAppDoc(
+      doc({
+        name: "Web App",
+        platforms: ["web", "android", "linux"]
+      }) as never
+    );
+
+    expect(record.platforms).toEqual(["web", "android"]);
   });
 
   it("maps release note aliases from Firestore data", () => {

@@ -18,7 +18,12 @@ function asDate(value: unknown): Date | undefined {
 }
 
 function asPlatform(value: unknown): BuildPlatform {
-  if (value === "ios" || value === "android" || value === "windows") {
+  if (
+    value === "ios" ||
+    value === "android" ||
+    value === "windows" ||
+    value === "web"
+  ) {
     return value;
   }
 
@@ -38,7 +43,10 @@ export function mapAppDoc(doc: QueryDocumentSnapshot<DocumentData>): AppRecord {
   const platforms = Array.isArray(data.platforms)
     ? data.platforms.filter(
         (platform): platform is BuildPlatform =>
-          platform === "ios" || platform === "android" || platform === "windows"
+          platform === "ios" ||
+          platform === "android" ||
+          platform === "windows" ||
+          platform === "web"
       )
     : [];
 

@@ -42,8 +42,8 @@ describe("publish build input", () => {
     );
   });
 
-  it("rejects unsupported platforms", () => {
-    expect(() =>
+  it("accepts web builds", () => {
+    expect(
       validatePublishBuildInput({
         appId: "app",
         platform: "web",
@@ -53,7 +53,23 @@ describe("publish build input", () => {
         driveUrl: "https://drive.google.com/file/d/drive-id/view",
         fileName: "app.zip"
       })
-    ).toThrow("platform must be ios, android, or windows");
+    ).toMatchObject({
+      platform: "web"
+    });
+  });
+
+  it("rejects unsupported platforms", () => {
+    expect(() =>
+      validatePublishBuildInput({
+        appId: "app",
+        platform: "linux",
+        version: "1",
+        buildNumber: "1",
+        driveFileId: "drive-id",
+        driveUrl: "https://drive.google.com/file/d/drive-id/view",
+        fileName: "app.zip"
+      })
+    ).toThrow("platform must be ios, android, windows, or web");
   });
 
   it("rejects non-HTTPS Diawi URLs", () => {

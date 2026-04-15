@@ -21,7 +21,7 @@ import {
 import type { AppRecord, BuildPlatform, BuildRecord } from "./types";
 
 type PlatformFilter = "all" | BuildPlatform;
-const platformOrder: BuildPlatform[] = ["ios", "android", "windows"];
+const platformOrder: BuildPlatform[] = ["ios", "android", "windows", "web"];
 
 function App() {
   const [firebaseState] = useState<
@@ -247,10 +247,8 @@ function App() {
       <header className="topbar">
         <div>
           <p className="eyebrow">Distribution Control</p>
-          <h1>Projects</h1>
         </div>
         <div className="user-bar">
-          <span>{user.email}</span>
           <button
             className="secondary"
             onClick={() => services && signOut(services.auth)}
@@ -283,20 +281,15 @@ function App() {
             onSelect={handleSelectApp}
           />
 
-          <section className="project-heading">
-            <div>
-              <p className="eyebrow">Selected Project</p>
-              <h2>{selectedApp?.name ?? "Unknown project"}</h2>
-              <p>{selectedApp?.bundleIdOrPackageName || "No bundle/package id"}</p>
-            </div>
-            {availablePlatforms.length > 0 && (
+          {availablePlatforms.length > 0 && (
+            <section className="project-heading">
               <PlatformToolbar
                 availablePlatforms={availablePlatforms}
                 platformFilter={platformFilter}
                 onChange={setPlatformFilter}
               />
-            )}
-          </section>
+            </section>
+          )}
 
           <section className="search-bar" aria-label="Search builds">
             <label htmlFor="build-search">Search builds</label>
@@ -405,6 +398,10 @@ function getPlatformLabel(platform: BuildPlatform) {
     return "Android";
   }
 
+  if (platform === "web") {
+    return "Web";
+  }
+
   return "Windows";
 }
 
@@ -416,6 +413,7 @@ function matchesBuildSearch(build: BuildRecord, query: string) {
   }
 
   return [
+    build.id,
     build.version,
     build.buildNumber,
     build.releaseNotes,
@@ -463,7 +461,6 @@ function ProjectPicker({
         >
           <span>
             <strong>{app.name}</strong>
-            <span>{app.bundleIdOrPackageName || app.id}</span>
           </span>
           <span className="project-count">{buildCounts.get(app.id) ?? 0} builds</span>
         </button>
@@ -497,9 +494,11 @@ function BuildList({
               <strong>
                 v{build.version} ({build.buildNumber})
               </strong>
-              <span>
-                {build.fileName || "Unknown file"} · {formatDate(build.createdAt)}
+              <span className="release-note-preview">
+                {build.releaseNotes || "No release notes"}
               </span>
+              <span>{formatDate(build.createdAt)}</span>
+              <span className="document-id">Document ID: {build.id}</span>
             </span>
           </button>
         );
@@ -544,6 +543,10 @@ function BuildDetail({ app, build }: BuildDetailProps) {
           <dt>Bundle / package</dt>
           <dd>{app?.bundleIdOrPackageName || "Not set"}</dd>
         </div>
+        <div>
+          <dt>Document ID</dt>
+          <dd>{build.id}</dd>
+        </div>
         {build.commitSha && (
           <div>
             <dt>Commit</dt>
@@ -575,7 +578,9 @@ function BuildDetail({ app, build }: BuildDetailProps) {
             ? "Open IPA in Drive"
             : build.platform === "android"
               ? "Open APK in Drive"
-              : "Open Windows Build in Drive"}
+              : build.platform === "web"
+                ? "Open Web Build in Drive"
+                : "Open Windows Build in Drive"}
       </a>
 
       <div className="external-links">

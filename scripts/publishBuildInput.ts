@@ -89,9 +89,10 @@ export function validatePublishBuildInput(
   if (
     input.platform !== "ios" &&
     input.platform !== "android" &&
-    input.platform !== "windows"
+    input.platform !== "windows" &&
+    input.platform !== "web"
   ) {
-    throw new Error("platform must be ios, android, or windows");
+    throw new Error("platform must be ios, android, windows, or web");
   }
 
   if (input.fileSize !== undefined && (!Number.isFinite(input.fileSize) || input.fileSize < 0)) {
