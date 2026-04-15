@@ -15,6 +15,8 @@ describe("publish build input", () => {
       "drive-id",
       "--driveUrl",
       "https://drive.google.com/file/d/drive-id/view",
+      "--diawiUrl",
+      "https://i.diawi.com/example",
       "--fileName",
       "example.apk",
       "--fileSize",
@@ -28,6 +30,7 @@ describe("publish build input", () => {
       buildNumber: "42",
       releaseNotes: "",
       driveFileId: "drive-id",
+      diawiUrl: "https://i.diawi.com/example",
       fileName: "example.apk",
       fileSize: 2048
     });
@@ -51,5 +54,20 @@ describe("publish build input", () => {
         fileName: "app.zip"
       })
     ).toThrow("platform must be either ios or android");
+  });
+
+  it("rejects non-HTTPS Diawi URLs", () => {
+    expect(() =>
+      validatePublishBuildInput({
+        appId: "app",
+        platform: "ios",
+        version: "1",
+        buildNumber: "1",
+        driveFileId: "drive-id",
+        driveUrl: "https://drive.google.com/file/d/drive-id/view",
+        diawiUrl: "http://i.diawi.com/example",
+        fileName: "app.ipa"
+      })
+    ).toThrow("diawiUrl must be a valid HTTPS URL");
   });
 });

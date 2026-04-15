@@ -18,6 +18,7 @@ export interface BuildRecord {
   releaseNotes: string;
   driveFileId: string;
   driveUrl: string;
+  diawiUrl?: string;
   fileName: string;
   fileSize?: number;
   checksum?: string;

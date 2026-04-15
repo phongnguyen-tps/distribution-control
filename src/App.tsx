@@ -300,6 +300,9 @@ interface BuildDetailProps {
 }
 
 function BuildDetail({ app, build }: BuildDetailProps) {
+  const packageUrl =
+    build.platform === "ios" ? build.diawiUrl ?? build.driveUrl : build.driveUrl;
+
   return (
     <section className="build-detail" aria-labelledby="build-detail-title">
       <div className="detail-heading">
@@ -348,16 +351,21 @@ function BuildDetail({ app, build }: BuildDetailProps) {
 
       <a
         className="download-link"
-        href={build.driveUrl}
+        href={packageUrl}
         target="_blank"
         rel="noreferrer"
       >
-        {build.platform === "ios" ? "Open IPA in Drive" : "Open APK in Drive"}
+        {build.platform === "ios" && build.diawiUrl
+          ? "Install with Diawi"
+          : build.platform === "ios"
+            ? "Open IPA in Drive"
+            : "Open APK in Drive"}
       </a>
 
       <p className="drive-note">
-        Google Drive controls access to this package. If Drive says you need
-        permission, ask the build owner to share the file with your account.
+        {build.platform === "ios" && build.diawiUrl
+          ? "Diawi handles iOS install for this build. The app still must be signed for this device."
+          : "Google Drive controls access to this package. If Drive says you need permission, ask the build owner to share the file with your account."}
       </p>
     </section>
   );

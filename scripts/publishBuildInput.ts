@@ -8,6 +8,7 @@ export interface PublishBuildInput {
   releaseNotes: string;
   driveFileId: string;
   driveUrl: string;
+  diawiUrl?: string;
   fileName: string;
   fileSize?: number;
   checksum?: string;
@@ -69,6 +70,7 @@ export function validatePublishBuildInput(
     releaseNotes: raw.releaseNotes ?? "",
     driveFileId: raw.driveFileId ?? "",
     driveUrl: raw.driveUrl ?? "",
+    diawiUrl: raw.diawiUrl || undefined,
     fileName: raw.fileName ?? "",
     fileSize: raw.fileSize ? Number(raw.fileSize) : undefined,
     checksum: raw.checksum || undefined,
@@ -96,6 +98,17 @@ export function validatePublishBuildInput(
     new URL(input.driveUrl);
   } catch {
     throw new Error("driveUrl must be a valid URL");
+  }
+
+  if (input.diawiUrl) {
+    try {
+      const diawiUrl = new URL(input.diawiUrl);
+      if (diawiUrl.protocol !== "https:") {
+        throw new Error();
+      }
+    } catch {
+      throw new Error("diawiUrl must be a valid HTTPS URL when provided");
+    }
   }
 
   return input;

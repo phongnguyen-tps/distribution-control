@@ -61,6 +61,7 @@ export function mapBuildDoc(doc: QueryDocumentSnapshot<DocumentData>): BuildReco
     releaseNotes: asString(data.releaseNotes),
     driveFileId: asString(data.driveFileId),
     driveUrl: asString(data.driveUrl),
+    diawiUrl: asString(data.diawiUrl) || undefined,
     fileName: asString(data.fileName),
     fileSize: asNumber(data.fileSize),
     checksum: asString(data.checksum) || undefined,

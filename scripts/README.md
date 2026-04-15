@@ -22,6 +22,7 @@ npm run publish-build -- \
   --releaseNotes "Internal QA build" \
   --driveFileId 1abcDriveFileId \
   --driveUrl https://drive.google.com/file/d/1abcDriveFileId/view \
+  --diawiUrl https://i.diawi.com/example \
   --fileName example-1.2.3-42.apk \
   --fileSize 58240000 \
   --sourceProject mobile-app \

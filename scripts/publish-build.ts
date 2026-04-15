@@ -56,6 +56,7 @@ async function publishBuild(input: PublishBuildInput) {
     releaseNotes: input.releaseNotes,
     driveFileId: input.driveFileId,
     driveUrl: input.driveUrl,
+    ...(input.diawiUrl ? { diawiUrl: input.diawiUrl } : {}),
     fileName: input.fileName,
     ...(input.fileSize !== undefined ? { fileSize: input.fileSize } : {}),
     ...(input.checksum ? { checksum: input.checksum } : {}),

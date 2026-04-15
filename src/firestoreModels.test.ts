@@ -20,6 +20,7 @@ describe("mapBuildDoc", () => {
         releaseNotes: "QA build",
         driveFileId: "drive-file",
         driveUrl: "https://drive.google.com/file/d/drive-file/view",
+        diawiUrl: "https://i.diawi.com/example",
         fileName: "app.ipa",
         fileSize: 10485760,
         createdAt
@@ -35,6 +36,7 @@ describe("mapBuildDoc", () => {
       releaseNotes: "QA build",
       driveFileId: "drive-file",
       driveUrl: "https://drive.google.com/file/d/drive-file/view",
+      diawiUrl: "https://i.diawi.com/example",
       fileName: "app.ipa",
       fileSize: 10485760,
       createdAt
