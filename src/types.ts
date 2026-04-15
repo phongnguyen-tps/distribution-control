@@ -1,4 +1,4 @@
-export type BuildPlatform = "ios" | "android";
+export type BuildPlatform = "ios" | "android" | "windows";
 
 export interface AppRecord {
   id: string;

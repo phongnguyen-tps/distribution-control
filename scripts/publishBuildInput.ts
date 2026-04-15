@@ -86,8 +86,12 @@ export function validatePublishBuildInput(
     throw new Error(`Missing required fields: ${missing.join(", ")}`);
   }
 
-  if (input.platform !== "ios" && input.platform !== "android") {
-    throw new Error("platform must be either ios or android");
+  if (
+    input.platform !== "ios" &&
+    input.platform !== "android" &&
+    input.platform !== "windows"
+  ) {
+    throw new Error("platform must be ios, android, or windows");
   }
 
   if (input.fileSize !== undefined && (!Number.isFinite(input.fileSize) || input.fileSize < 0)) {

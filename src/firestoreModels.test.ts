@@ -47,4 +47,33 @@ describe("mapBuildDoc", () => {
     expect(formatFileSize(10485760)).toBe("10.0 MB");
     expect(formatFileSize(undefined)).toBe("Unknown size");
   });
+
+  it("keeps Windows build platform values", () => {
+    const record = mapBuildDoc(
+      doc({
+        appId: "app-1",
+        platform: "windows",
+        version: "1.0.0",
+        buildNumber: "100",
+        driveUrl: "https://drive.google.com/file/d/drive-file/view"
+      }) as never
+    );
+
+    expect(record.platform).toBe("windows");
+  });
+
+  it("maps release note aliases from Firestore data", () => {
+    const record = mapBuildDoc(
+      doc({
+        appId: "app-1",
+        platform: "android",
+        version: "1.0.0",
+        buildNumber: "100",
+        releaseNote: "Alias release notes",
+        driveUrl: "https://drive.google.com/file/d/drive-file/view"
+      }) as never
+    );
+
+    expect(record.releaseNotes).toBe("Alias release notes");
+  });
 });

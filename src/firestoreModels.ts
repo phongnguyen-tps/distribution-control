@@ -18,11 +18,11 @@ function asDate(value: unknown): Date | undefined {
 }
 
 function asPlatform(value: unknown): BuildPlatform {
-  if (value === "ios" || value === "android") {
+  if (value === "ios" || value === "android" || value === "windows") {
     return value;
   }
 
-  return "android";
+  return "windows";
 }
 
 function asString(value: unknown, fallback = ""): string {
@@ -36,7 +36,10 @@ function asNumber(value: unknown): number | undefined {
 export function mapAppDoc(doc: QueryDocumentSnapshot<DocumentData>): AppRecord {
   const data = doc.data();
   const platforms = Array.isArray(data.platforms)
-    ? data.platforms.filter((platform): platform is BuildPlatform => platform === "ios" || platform === "android")
+    ? data.platforms.filter(
+        (platform): platform is BuildPlatform =>
+          platform === "ios" || platform === "android" || platform === "windows"
+      )
     : [];
 
   return {
@@ -58,7 +61,7 @@ export function mapBuildDoc(doc: QueryDocumentSnapshot<DocumentData>): BuildReco
     platform: asPlatform(data.platform),
     version: asString(data.version),
     buildNumber: asString(data.buildNumber),
-    releaseNotes: asString(data.releaseNotes),
+    releaseNotes: asString(data.releaseNotes || data.releaseNote || data.notes),
     driveFileId: asString(data.driveFileId),
     driveUrl: asString(data.driveUrl),
     diawiUrl: asString(data.diawiUrl) || undefined,

@@ -6,7 +6,7 @@ describe("publish build input", () => {
     const parsed = parseCliArgs([
       "--appId",
       "com.example.app",
-      "--platform=android",
+      "--platform=windows",
       "--version",
       "1.2.3",
       "--buildNumber",
@@ -25,7 +25,7 @@ describe("publish build input", () => {
 
     expect(validatePublishBuildInput(parsed)).toMatchObject({
       appId: "com.example.app",
-      platform: "android",
+      platform: "windows",
       version: "1.2.3",
       buildNumber: "42",
       releaseNotes: "",
@@ -53,7 +53,7 @@ describe("publish build input", () => {
         driveUrl: "https://drive.google.com/file/d/drive-id/view",
         fileName: "app.zip"
       })
-    ).toThrow("platform must be either ios or android");
+    ).toThrow("platform must be ios, android, or windows");
   });
 
   it("rejects non-HTTPS Diawi URLs", () => {

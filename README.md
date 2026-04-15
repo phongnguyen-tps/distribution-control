@@ -6,8 +6,8 @@ Static GitHub Pages app for managing internal iOS and Android build metadata.
 
 - Uses Firebase Authentication with Google Sign-In.
 - Reads `apps` and `builds` metadata from Cloud Firestore.
-- Opens private Google Drive links for Android APK packages and Diawi install
-  links for iOS builds when `diawiUrl` is present.
+- Opens private Google Drive links for Android APK and Windows packages, and
+  Diawi install links for iOS builds when `diawiUrl` is present.
 - Lets external CI publish build metadata through a Firebase Admin SDK script.
 
 ## Local setup
@@ -44,7 +44,8 @@ Expected collections:
 - `apps`: `name`, `bundleIdOrPackageName`, `platforms`, `createdAt`, `updatedAt`
 - `builds`: `appId`, `platform`, `version`, `buildNumber`, `releaseNotes`,
   `driveFileId`, `driveUrl`, `diawiUrl`, `fileName`, `fileSize`, `checksum`,
-  `createdAt`, `createdBy`, `sourceProject`, `commitSha`
+  `createdAt`, `createdBy`, `sourceProject`, `commitSha`. `platform` can be
+  `ios`, `android`, or `windows`.
 
 For iOS builds, set `diawiUrl` to the Diawi install page. If `diawiUrl` is not
 present, the UI falls back to the Drive link.
