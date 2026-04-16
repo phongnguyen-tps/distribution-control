@@ -4,7 +4,7 @@ Static GitHub Pages app for managing internal iOS and Android build metadata.
 
 ## What it does
 
-- Uses Firebase Authentication with Google Sign-In.
+- Uses Firebase Authentication with Google Sign-In and email/password sign-in.
 - Reads `apps` and `builds` metadata from Cloud Firestore.
 - Opens private Google Drive links for Android APK and Windows packages, and
   Diawi install links for iOS builds when `diawiUrl` is present.
@@ -32,8 +32,8 @@ served from a custom domain or different path.
 
 ## Firestore
 
-Deploy `firestore.rules` to allow signed-in users to read metadata while blocking
-client writes:
+Deploy `firestore.rules` to allow only authorized signed-in users to read
+metadata while blocking client writes:
 
 ```sh
 firebase deploy --only firestore:rules
@@ -46,6 +46,22 @@ Expected collections:
   `driveFileId`, `driveUrl`, `diawiUrl`, `fileName`, `fileSize`, `checksum`,
   `createdAt`, `createdBy`, `sourceProject`, `commitSha`. `platform` can be
   `ios`, `android`, or `windows`.
+- `authorizedUsers`: document ID must be the Firebase Auth user UID. Set
+  `active` to `true` to grant access.
+
+Example allowlist document:
+
+```json
+// authorizedUsers/USER_UID
+{
+  "email": "user@example.com",
+  "active": true,
+  "role": "viewer"
+}
+```
+
+Create at least one `authorizedUsers/{uid}` document before deploying the
+restricted rules, otherwise every client user will be denied access.
 
 For iOS builds, set `diawiUrl` to the Diawi install page. If `diawiUrl` is not
 present, the UI falls back to the Drive link.

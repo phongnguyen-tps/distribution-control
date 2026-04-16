@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   type User
@@ -48,8 +49,12 @@ function App() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [platformFilter, setPlatformFilter] = useState<PlatformFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [signingInMethod, setSigningInMethod] = useState<
+    "google" | "password" | null
+  >(null);
 
   useEffect(() => {
     if (!firebaseState.services) {
@@ -73,7 +78,11 @@ function App() {
     }
 
     const handleError = (firestoreError: FirestoreError) => {
-      setError(firestoreError.message);
+      setError(
+        firestoreError.code === "permission-denied"
+          ? "Your account is not authorized to access Distribution Control."
+          : firestoreError.message
+      );
     };
 
     const unsubscribeApps = onSnapshot(
@@ -182,7 +191,7 @@ function App() {
       return;
     }
 
-    setIsSigningIn(true);
+    setSigningInMethod("google");
     setError(null);
 
     try {
@@ -197,7 +206,34 @@ function App() {
           : "Unable to sign in with Google."
       );
     } finally {
-      setIsSigningIn(false);
+      setSigningInMethod(null);
+    }
+  }
+
+  async function handlePasswordSignIn(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!firebaseState.services) {
+      return;
+    }
+
+    setSigningInMethod("password");
+    setError(null);
+
+    try {
+      await signInWithEmailAndPassword(
+        firebaseState.services.auth,
+        email.trim(),
+        password
+      );
+    } catch (signInError) {
+      setError(
+        signInError instanceof Error
+          ? signInError.message
+          : "Unable to sign in with email and password."
+      );
+    } finally {
+      setSigningInMethod(null);
     }
   }
 
@@ -230,12 +266,49 @@ function App() {
           <p className="eyebrow">Distribution Control</p>
           <h1 id="login-title">Sign in to view mobile builds</h1>
           <p>
-            Use your Google account to access the internal iOS and Android build
-            catalog. Drive controls whether each package can be downloaded.
+            Use your Google account or Firebase email/password account to access
+            the internal iOS and Android build catalog.
           </p>
-          <button onClick={handleSignIn} disabled={isSigningIn}>
-            {isSigningIn ? "Signing in..." : "Sign in with Google"}
-          </button>
+          <div className="auth-actions">
+            <button
+              onClick={handleSignIn}
+              disabled={signingInMethod !== null}
+              type="button"
+            >
+              {signingInMethod === "google"
+                ? "Signing in..."
+                : "Sign in with Google"}
+            </button>
+            <div className="auth-divider">or</div>
+            <form className="password-form" onSubmit={handlePasswordSignIn}>
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                autoComplete="email"
+                inputMode="email"
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+                required
+                type="email"
+                value={email}
+              />
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                autoComplete="current-password"
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Password"
+                required
+                type="password"
+                value={password}
+              />
+              <button disabled={signingInMethod !== null} type="submit">
+                {signingInMethod === "password"
+                  ? "Signing in..."
+                  : "Sign in with email"}
+              </button>
+            </form>
+          </div>
           {error && <p className="error-text">{error}</p>}
         </section>
       </main>
