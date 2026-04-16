@@ -13,6 +13,7 @@ import {
   type FirestoreError
 } from "firebase/firestore";
 import { getFirebaseServices, type FirebaseServices } from "./firebase";
+import { getBuildDisplayName, matchesBuildSearch } from "./buildSearch";
 import {
   formatDate,
   formatFileSize,
@@ -372,7 +373,7 @@ function App() {
                 type="search"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Version, build number, release notes"
+                placeholder="Version, display name, build number, release notes"
               />
               {searchQuery && (
                 <button className="secondary" onClick={() => setSearchQuery("")}>
@@ -542,25 +543,6 @@ function getPlatformLabel(platform: BuildPlatform) {
   return "Windows";
 }
 
-function matchesBuildSearch(build: BuildRecord, query: string) {
-  const normalizedQuery = query.trim().toLowerCase();
-
-  if (!normalizedQuery) {
-    return true;
-  }
-
-  return [
-    build.id,
-    build.version,
-    build.buildNumber,
-    build.releaseNotes,
-    build.commitSha,
-    build.sourceProject
-  ]
-    .filter(Boolean)
-    .some((value) => value?.toLowerCase().includes(normalizedQuery));
-}
-
 function compareBuilds(first: BuildRecord, second: BuildRecord) {
   return (second.createdAt?.getTime() ?? 0) - (first.createdAt?.getTime() ?? 0);
 }
@@ -628,9 +610,7 @@ function BuildList({
           >
             <span className={`platform ${build.platform}`}>{build.platform}</span>
             <span className="build-summary">
-              <strong>
-                v{build.version} ({build.buildNumber})
-              </strong>
+              <strong>{getBuildDisplayName(build)}</strong>
               <span className="release-note-preview">
                 {build.releaseNotes || "No release notes"}
               </span>
