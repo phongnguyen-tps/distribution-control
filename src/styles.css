@@ -210,6 +210,7 @@ button:disabled {
 .project-heading,
 .project-picker,
 .search-bar,
+.pagination-bar,
 .toolbar,
 .content-grid {
   margin: 0 auto 18px;
@@ -415,6 +416,22 @@ button:disabled {
 .search-bar input:focus {
   border-color: var(--accent);
   outline: 2px solid #d9ece5;
+}
+
+.pagination-bar {
+  align-items: center;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  display: flex;
+  font-size: 0.9rem;
+  gap: 12px;
+  justify-content: space-between;
+  padding-top: 12px;
+}
+
+.pagination-bar div {
+  display: flex;
+  gap: 8px;
 }
 
 .content-grid {
@@ -640,6 +657,12 @@ button:disabled {
 
   .search-bar div {
     display: grid;
+  }
+
+  .pagination-bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .metadata {

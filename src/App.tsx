@@ -26,6 +26,7 @@ type PlatformFilter = "all" | BuildPlatform;
 const platformOrder: BuildPlatform[] = ["ios", "android", "windows", "web"];
 
 function App() {
+  const pageSize = 10;
   const [firebaseState] = useState<
     | { services: FirebaseServices; initError?: undefined }
     | { services?: undefined; initError: string }
@@ -50,6 +51,7 @@ function App() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [platformFilter, setPlatformFilter] = useState<PlatformFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -169,9 +171,39 @@ function App() {
     return platformBuilds.filter((build) => matchesBuildSearch(build, searchQuery));
   }, [platformFilter, searchQuery, selectedAppBuilds]);
 
+  const totalPages = Math.max(1, Math.ceil(visibleBuilds.length / pageSize));
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedAppId, platformFilter, searchQuery]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const pagedBuilds = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return visibleBuilds.slice(start, start + pageSize);
+  }, [currentPage, pageSize, visibleBuilds]);
+
+  useEffect(() => {
+    if (pagedBuilds.length === 0) {
+      setSelectedBuildId(null);
+      return;
+    }
+
+    setSelectedBuildId((currentId) =>
+      currentId && pagedBuilds.some((build) => build.id === currentId)
+        ? currentId
+        : pagedBuilds[0]?.id ?? null
+    );
+  }, [pagedBuilds]);
+
   const selectedBuild =
-    visibleBuilds.find((build) => build.id === selectedBuildId) ??
-    visibleBuilds[0] ??
+    pagedBuilds.find((build) => build.id === selectedBuildId) ??
+    pagedBuilds[0] ??
     null;
 
   function handleSelectApp(appId: string) {
@@ -383,6 +415,32 @@ function App() {
             </div>
           </section>
 
+          {visibleBuilds.length > 0 && (
+            <section className="pagination-bar" aria-label="Build pagination">
+              <span>
+                Page {currentPage} / {totalPages} ({visibleBuilds.length} builds)
+              </span>
+              <div>
+                <button
+                  className="secondary"
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  disabled={currentPage <= 1}
+                >
+                  Previous
+                </button>
+                <button
+                  className="secondary"
+                  onClick={() =>
+                    setCurrentPage((page) => Math.min(totalPages, page + 1))
+                  }
+                  disabled={currentPage >= totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </section>
+          )}
+
           {visibleBuilds.length === 0 ? (
             <section className="empty-state">
               <h2>No builds for this project</h2>
@@ -397,7 +455,7 @@ function App() {
               className={`content-grid ${isDetailOpen ? "detail-open" : ""}`}
             >
               <BuildList
-                builds={visibleBuilds}
+                builds={pagedBuilds}
                 selectedBuildId={selectedBuild?.id ?? null}
                 onSelect={handleSelectBuild}
               />
